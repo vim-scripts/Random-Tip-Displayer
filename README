@@ -1,0 +1,14 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=1811
+
+This Vim script allows: viewing, downloading, and displaying random position of "Best Vim Tips" from the page:
+http://rayninfo.co.uk/vimtips.html (see: vimtip #305)
+
+
+Usage:
+
+<Leader>gt (or :call GetVimTips()) - download and parse "Best Vim Tips". File is saved in ~/.vim/vimtips.txt (~/vimfiles/vimtips.txt under windows)
+
+<Leader>dt (or :call DisplayVimTips()) - display "Best Vim Tips" in separate buffer (download it, if the file is not present)
+   
+<Leader>rt (or :call DisplayRandomTip()) - display random position in vimtips.txt (download if necessary)
+
