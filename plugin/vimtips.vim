@@ -3,7 +3,20 @@
 " License: This file is distributed under Vim license
 " Version: 0.1
 
-" This script gets and displays fresh version of vimtips
+" This Vim script allows: viewing, downloading, and displaying random position
+" of "Best Vim Tips" from the page: http://rayninfo.co.uk/vimtips.html
+"
+" Usage:
+"
+" <Leader>dt (or :call DisplayVimTips()) - display "Best Vim Tips" in separate
+" buffer (download it, if the file is not present)
+"
+" <Leader>rt (or :call DisplayRandomTip()) - display random position in
+" vimtips.txt (download if necessary)
+"
+" <Leader>gt (or :call GetVimTips()) - download and parse "Best Vim Tips".
+" File is saved in ~/.vim/vimtips.txt (~/vimfiles/vimtips.txt under windows)
+"  
 
 " variables  {{{
 let s:tipsurl = "http://rayninfo.co.uk/vimtips.html"
@@ -31,6 +44,22 @@ function! s:gotoBuffer(name)
 endfunction
 "}}}
 
+" s:download(url) "{{{
+function! Download(url)
+    if has("python")
+    python << EOF
+import vim, urllib
+url = vim.eval("a:url")
+u = urllib.urlopen(url)
+vim.current.buffer.append(u.readlines())
+u.close()
+EOF
+    else
+        execute "Nread " . a:url
+    endif
+endfunction
+"}}}
+
 "{{{ GetVimTips() - get tips from the internet
 function! GetVimTips()
     if filereadable(s:tipfile) == 1
@@ -38,13 +67,15 @@ function! GetVimTips()
         let bakfile = s:tipfile . ".bak"
         call rename(srcfile, bakfile)
     endif
-    "execute "split " . s:tipfile
     call s:gotoBuffer(s:tipfile)
-    execute "Nread " . s:tipsurl
+    set noreadonly
+    setlocal fenc=
+    call Download(s:tipsurl)
     call search("__BEGIN__")
     normal dgg
     call search("__END__")
     normal dG
+    %s/&lt;/</g
     write
     normal gg
     set readonly
